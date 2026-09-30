@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estate Core | Luxury Real Estate</title> <!--[cite: 19]-->
+
+    <meta name="description" content="Bespoke luxury real estate advisory for elite buyers and sellers worldwide." /> <!--[cite: 19]-->
+    <meta name="author" content="WebNova Studio" /> <!--[cite: 19]-->
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Plus Jakarta Sans & Playfair Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"> <!--[cite: 19]-->
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                    },
+                    colors: {
+                        cobalt: {
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb', /*[cite: 19]*/
+                            700: '#1d4ed8',
+                        },
+                        obsidian: {
+                            800: '#151c2e',
+                            900: '#0b1120',
+                            950: '#070a12',
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulseGlow 4s ease-in-out infinite',
+                        'float': 'floatSlow 5s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.2', transform: 'scale(1)' },
+                            '50%': { opacity: '0.45', transform: 'scale(1.05)' },
+                        },
+                        floatSlow: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Smooth Scrollbar */
+        ::-webkit-scrollbar { width: 7px; }
+        ::-webkit-scrollbar-track { background: #070a12; }
+        ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 4px; }
+
+        .glass-nav {
+            background: rgba(7, 10, 18, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .glass-card {
+            background: rgba(21, 28, 46, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(96, 165, 250, 0.35);
+            box-shadow: 0 20px 45px -10px rgba(37, 99, 235, 0.2);
+        }
+
+        .hero-surface {
+            background: linear-gradient(180deg, rgba(7, 10, 18, 0.45) 0%, rgba(7, 10, 18, 0.95) 100%), 
+                        url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=85'); /*[cite: 19]*/
+            background-size: cover;
+            background-position: center;
+        }
+
+        .reveal-element {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: all 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-element.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="bg-obsidian-950 text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-cobalt-600 selection:text-white">
+
+    <!-- Page Loading Mask[cite: 19] -->
+    <div id="loader" class="fixed inset-0 bg-obsidian-950 z-[9999] flex items-center justify-center transition-opacity duration-500"> <!--[cite: 19]-->
+        <div class="relative flex items-center justify-center">
+            <div class="w-16 h-16 rounded-full border-2 border-cobalt-500/20 border-t-cobalt-500 animate-spin"></div>
+            <span class="absolute font-bold text-xs text-cobalt-400">EC</span>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="statusToast" class="fixed top-24 right-6 z-50 transform -translate-y-28 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="glass-card bg-obsidian-900 px-5 py-4 rounded-2xl border border-cobalt-500/40 shadow-2xl flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-cobalt-500/20 text-cobalt-400 flex items-center justify-center font-bold">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-white">Inquiry Forwarded</p>
+                <p class="text-[11px] text-slate-400">Our private wealth advisor will contact you confidentially.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ambient Glowing Orbs -->
+    <div class="fixed top-0 left-1/4 w-[600px] h-[550px] bg-cobalt-600/10 blur-[160px] pointer-events-none -z-10 animate-pulse-slow"></div>
+    <div class="fixed bottom-10 right-10 w-[550px] h-[550px] bg-sky-500/10 blur-[180px] pointer-events-none -z-10 animate-pulse-slow"></div>
+
+    <!-- Sticky Navigation[cite: 19] -->
+    <nav id="navbar" class="fixed top-0 left-0 w-full z-50 glass-nav border-b border-white/5 transition-all duration-300"> <!--[cite: 19]-->
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            
+            <!-- Brand Logo[cite: 19] -->
+            <a href="#" class="flex items-center gap-2 text-2xl font-black tracking-tight text-white group">
+                <div class="w-9 h-9 rounded-xl bg-cobalt-600 flex items-center justify-center text-white shadow-lg shadow-cobalt-600/30 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-building-columns text-sm"></i>
+                </div>
+                <span>ESTATE<span class="text-cobalt-500">.</span>CORE</span> <!--[cite: 19]-->
+            </a>
+
+            <!-- Desktop Nav Links[cite: 19] -->
+            <div class="hidden md:flex items-center gap-8 text-xs uppercase tracking-[2.5px] font-bold text-slate-300"> <!--[cite: 19]-->
+                <a href="#listings" class="hover:text-cobalt-400 transition-colors">Listings</a> <!--[cite: 19]-->
+                <a href="#stats" class="hover:text-cobalt-400 transition-colors">Achievements</a> <!--[cite: 19]-->
+                <a href="#services" class="hover:text-cobalt-400 transition-colors">Services</a> <!--[cite: 19]-->
+                <a href="#testimonials" class="hover:text-cobalt-400 transition-colors">Testimonials</a> <!--[cite: 19]-->
+            </div>
+
+            <!-- Desktop Connect CTA[cite: 19] -->
+            <div class="hidden md:flex items-center gap-4">
+                <a href="#contact" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-cobalt-600 to-sky-500 hover:from-cobalt-500 hover:to-sky-400 text-white font-bold text-xs uppercase tracking-[2px] shadow-lg shadow-cobalt-600/25 active:scale-95 transition-all"> <!--[cite: 19]-->
+                    Connect <!--[cite: 19]-->
+                </a>
+            </div>
+
+            <!-- Mobile Hamburger Toggle[cite: 19] -->
+            <button id="menuBtn" aria-label="Toggle Navigation" class="md:hidden text-slate-300 hover:text-white p-2 focus:outline-none"> <!--[cite: 19]-->
+                <i class="fa-solid fa-bars text-xl" id="menuToggleIcon"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Drawer Menu[cite: 19] -->
+        <div id="mobileMenu" class="hidden md:hidden px-6 pt-3 pb-8 bg-obsidian-950/98 border-b border-white/10 backdrop-blur-2xl"> <!--[cite: 19]-->
+            <div class="flex flex-col gap-4 text-xs font-bold uppercase tracking-[2.5px] text-slate-300">
+                <a href="#listings" class="mobile-nav-link py-2 hover:text-cobalt-400">Listings</a> <!--[cite: 19]-->
+                <a href="#stats" class="mobile-nav-link py-2 hover:text-cobalt-400">Achievements</a> <!--[cite: 19]-->
+                <a href="#services" class="mobile-nav-link py-2 hover:text-cobalt-400">Services &amp; Packages</a> <!--[cite: 19]-->
+                <a href="#testimonials" class="mobile-nav-link py-2 hover:text-cobalt-400">Client Reviews</a> <!--[cite: 19]-->
+                <a href="#contact" class="mobile-nav-link text-center w-full py-3.5 mt-2 rounded-full bg-cobalt-600 text-white font-bold tracking-widest uppercase shadow-lg shadow-cobalt-600/30"> <!--[cite: 19]-->
+                    Connect Directly <!--[cite: 19]-->
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section[cite: 19] -->
+    <header class="relative min-h-screen flex items-center hero-surface px-6 pt-32 pb-20"> <!--[cite: 19]-->
+        <div class="max-w-7xl mx-auto w-full relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-8 reveal-element">
+                    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cobalt-500/10 border border-cobalt-500/30 text-cobalt-400 text-xs font-bold uppercase tracking-[3px] mb-6">
+                        <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+                        Premium Luxury Real Estate <!--[cite: 19]-->
+                    </span>
+
+                    <h1 class="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold text-white tracking-tight leading-[1] mb-6"> <!--[cite: 19]-->
+                        Luxury is <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-cobalt-400 italic font-normal">
+                            Standard. <!--[cite: 19]-->
+                        </span>
+                    </h1>
+
+                    <p class="text-slate-300 text-base sm:text-lg font-light leading-relaxed max-w-xl mb-10">
+                        Bespoke real estate services for elite buyers and sellers. Delivering exceptional results with world-class marketing, premium exposure, and unmatched client experiences. <!--[cite: 19]-->
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                        <a href="#contact" class="px-8 py-4 bg-gradient-to-r from-cobalt-600 to-sky-500 hover:from-cobalt-500 hover:to-sky-400 text-white font-bold text-xs uppercase tracking-[2px] rounded-xl shadow-xl shadow-cobalt-600/30 text-center hover:scale-105 active:scale-95 transition-all"> <!--[cite: 19]-->
+                            Get Valuation <!--[cite: 19]-->
+                        </a>
+                        <a href="#listings" class="px-8 py-4 glass-card hover:bg-white/10 text-white font-semibold text-xs uppercase tracking-[2px] rounded-xl text-center transition-all"> <!--[cite: 19]-->
+                            View Curated Gallery <!--[cite: 19]-->
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Floating Trophy Card Indicator -->
+                <div class="lg:col-span-4 relative reveal-element hidden lg:block">
+                    <div class="glass-card p-6 rounded-3xl border border-white/10 shadow-2xl animate-float">
+                        <div class="h-64 rounded-2xl overflow-hidden mb-5 relative">
+                            <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop" alt="Bel Air Estate" class="w-full h-full object-cover"> <!--[cite: 19]-->
+                            <span class="absolute top-3 left-3 bg-obsidian-950/80 backdrop-blur-md text-[10px] uppercase font-bold text-cobalt-400 px-3 py-1 rounded-full border border-white/10">Private Placement</span>
+                        </div>
+                        <div class="flex justify-between items-baseline mb-1">
+                            <span class="text-xs uppercase tracking-widest text-slate-400">Bel Air, CA</span> <!--[cite: 19]-->
+                            <span class="text-xl font-bold font-serif text-white">$12,500,000</span> <!--[cite: 19]-->
+                        </div>
+                        <p class="text-xs text-slate-400">Promontory views overlooking the Los Angeles basin.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats & Achievements Section[cite: 19] -->
+    <section id="stats" class="py-20 bg-obsidian-900 border-y border-white/5 reveal-element"> <!--[cite: 19]-->
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 text-center"> <!--[cite: 19]-->
+                
+                <div class="p-4 border-b sm:border-b-0 sm:border-r border-white/5">
+                    <h3 class="font-serif text-5xl sm:text-6xl font-black text-cobalt-400 mb-2">250+</h3> <!--[cite: 19]-->
+                    <p class="uppercase tracking-[3px] text-xs text-slate-400 font-bold">Luxury Homes Sold</p> <!--[cite: 19]-->
+                </div>
+
+                <div class="p-4 border-b sm:border-b-0 sm:border-r border-white/5">
+                    <h3 class="font-serif text-5xl sm:text-6xl font-black text-white mb-2">$1.2B</h3> <!--[cite: 19]-->
+                    <p class="uppercase tracking-[3px] text-xs text-slate-400 font-bold">Closed Transactions</p> <!--[cite: 19]-->
+                </div>
+
+                <div class="p-4">
+                    <h3 class="font-serif text-5xl sm:text-6xl font-black text-sky-400 mb-2">18+</h3> <!--[cite: 19]-->
+                    <p class="uppercase tracking-[3px] text-xs text-slate-400 font-bold">Years Experience</p> <!--[cite: 19]-->
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Curated Listings Section[cite: 19] -->
+    <section id="listings" class="py-28 max-w-7xl mx-auto px-6 reveal-element"> <!--[cite: 19]-->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16"> <!--[cite: 19]-->
+            <div>
+                <span class="text-xs uppercase tracking-[3px] text-cobalt-400 font-bold block mb-2">Featured Properties</span> <!--[cite: 19]-->
+                <h2 class="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight">Curated Listings</h2> <!--[cite: 19]-->
+            </div>
+            
+            <!-- Category Filter Tabs -->
+            <div class="flex flex-wrap gap-2 text-xs font-bold uppercase tracking-wider">
+                <button onclick="filterProperties('all', this)" class="filter-btn px-4 py-2 rounded-full bg-cobalt-600 text-white">All Portfolio</button>
+                <button onclick="filterProperties('mansions', this)" class="filter-btn px-4 py-2 rounded-full glass-card text-slate-400 hover:text-white">Mansions</button>
+                <button onclick="filterProperties('penthouses', this)" class="filter-btn px-4 py-2 rounded-full glass-card text-slate-400 hover:text-white">Penthouses</button>
+                <button onclick="filterProperties('waterfront', this)" class="filter-btn px-4 py-2 rounded-full glass-card text-slate-400 hover:text-white">Waterfront</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8"> <!--[cite: 19]-->
+            
+            <!-- Property 1: Bel Air[cite: 19] -->
+            <div class="property-item mansions group relative rounded-3xl overflow-hidden glass-card border border-white/10 hover:-translate-y-2 transition-all duration-500 shadow-2xl flex flex-col justify-between"> <!--[cite: 19]-->
+                <div class="relative h-80 overflow-hidden">
+                    <img
+                        src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=1200&auto=format&fit=crop"
+                        class="w-full h-full object-cover group-hover:scale-110 duration-700"
+                        alt="Bel Air Luxury Mansion"
+                    > <!--[cite: 19]-->
+                    <div class="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/20 to-transparent"></div>
+                    <span class="absolute top-4 left-4 bg-obsidian-950/80 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full text-cobalt-400 border border-white/10">
+                        Bel Air, California <!--[cite: 19]-->
+                    </span>
+                </div>
+
+                <div class="p-6">
+                    <h3 class="font-serif text-3xl font-bold text-white mb-1">$12,500,000</h3> <!--[cite: 19]-->
+                    <p class="text-slate-400 text-xs sm:text-sm mb-6 font-light">
+                        Contemporary mansion with panoramic skyline views. <!--[cite: 19]-->
+                    </p>
+
+                    <!-- Property Specs -->
+                    <div class="grid grid-cols-3 gap-2 py-4 border-y border-white/10 text-slate-300 text-xs font-medium mb-6">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-bed text-cobalt-400"></i> 6 Beds</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-bath text-cobalt-400"></i> 8 Baths</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-ruler-combined text-cobalt-400"></i> 9,400 sqft</span>
+                    </div>
+
+                    <a href="#contact" class="block w-full py-3.5 text-center rounded-xl border border-white/15 hover:border-cobalt-500 hover:bg-cobalt-600 hover:text-white text-xs uppercase tracking-widest font-bold transition">
+                        Request Private Tour
+                    </a>
+                </div>
+            </div>
+
+            <!-- Property 2: Aspen[cite: 19] -->
+            <div class="property-item penthouses group relative rounded-3xl overflow-hidden glass-card border border-white/10 hover:-translate-y-2 transition-all duration-500 shadow-2xl flex flex-col justify-between"> <!--[cite: 19]-->
+                <div class="relative h-80 overflow-hidden">
+                    <img
+                        src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop"
+                        class="w-full h-full object-cover group-hover:scale-110 duration-700"
+                        alt="Aspen Penthouse"
+                    >
+                    <div class="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/20 to-transparent"></div>
+                    <span class="absolute top-4 left-4 bg-obsidian-950/80 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full text-cobalt-400 border border-white/10">
+                        Aspen, Colorado <!--[cite: 19]-->
+                    </span>
+                </div>
+
+                <div class="p-6">
+                    <h3 class="font-serif text-3xl font-bold text-white mb-1">$9,200,000</h3> <!--[cite: 19]-->
+                    <p class="text-slate-400 text-xs sm:text-sm mb-6 font-light">
+                        Luxury penthouse with private rooftop experience. <!--[cite: 19]-->
+                    </p>
+
+                    <!-- Property Specs -->
+                    <div class="grid grid-cols-3 gap-2 py-4 border-y border-white/10 text-slate-300 text-xs font-medium mb-6">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-bed text-cobalt-400"></i> 4 Beds</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-bath text-cobalt-400"></i> 5 Baths</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-ruler-combined text-cobalt-400"></i> 5,800 sqft</span>
+                    </div>
+
+                    <a href="#contact" class="block w-full py-3.5 text-center rounded-xl border border-white/15 hover:border-cobalt-500 hover:bg-cobalt-600 hover:text-white text-xs uppercase tracking-widest font-bold transition">
+                        Request Private Tour
+                    </a>
+                </div>
+            </div>
+
+            <!-- Property 3: Miami[cite: 19] -->
+            <div class="property-item waterfront group relative rounded-3xl overflow-hidden glass-card border border-white/10 hover:-translate-y-2 transition-all duration-500 shadow-2xl flex flex-col justify-between"> <!--[cite: 19]-->
+                <div class="relative h-80 overflow-hidden">
+                    <img
+                        src="https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1200&auto=format&fit=crop"
+                        class="w-full h-full object-cover group-hover:scale-110 duration-700"
+                        alt="Miami Waterfront Estate"
+                    > <!--[cite: 19]-->
+                    <div class="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/20 to-transparent"></div>
+                    <span class="absolute top-4 left-4 bg-obsidian-950/80 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full text-cobalt-400 border border-white/10">
+                        Miami, Florida <!--[cite: 19]-->
+                    </span>
+                </div>
+
+                <div class="p-6">
+                    <h3 class="font-serif text-3xl font-bold text-white mb-1">$7,850,000</h3> <!--[cite: 19]-->
+                    <p class="text-slate-400 text-xs sm:text-sm mb-6 font-light">
+                        Waterfront estate with private marina access. <!--[cite: 19]-->
+                    </p>
+
+                    <!-- Property Specs -->
+                    <div class="grid grid-cols-3 gap-2 py-4 border-y border-white/10 text-slate-300 text-xs font-medium mb-6">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-bed text-cobalt-400"></i> 5 Beds</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-bath text-cobalt-400"></i> 6 Baths</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-ruler-combined text-cobalt-400"></i> 7,200 sqft</span>
+                    </div>
+
+                    <a href="#contact" class="block w-full py-3.5 text-center rounded-xl border border-white/15 hover:border-cobalt-500 hover:bg-cobalt-600 hover:text-white text-xs uppercase tracking-widest font-bold transition">
+                        Request Private Tour
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Services & Exclusive Packages[cite: 19] -->
+    <section id="services" class="py-28 bg-obsidian-900/60 border-y border-white/5 reveal-element"> <!--[cite: 19]-->
+        <div class="max-w-7xl mx-auto px-6">
+            
+            <div class="text-center max-w-2xl mx-auto mb-20"> <!--[cite: 19]-->
+                <span class="text-xs uppercase tracking-[3px] text-cobalt-400 font-bold block mb-2">Representation Models</span>
+                <h2 class="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight">Exclusive Packages</h2> <!--[cite: 19]-->
+                <p class="text-slate-400 text-sm mt-3 font-light">Tailored commission tiers structured to maximize property valuation and global liquidity.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch"> <!--[cite: 19]-->
+                
+                <!-- Standard Package[cite: 19] -->
+                <div class="glass-card p-8 sm:p-10 rounded-3xl border border-white/10 flex flex-col justify-between"> <!--[cite: 19]-->
+                    <div>
+                        <span class="uppercase tracking-[3px] text-cobalt-400 text-xs font-bold block mb-3">Standard</span> <!--[cite: 19]-->
+                        <h3 class="font-serif text-5xl font-extrabold text-white mb-6">1.5%</h3> <!--[cite: 19]-->
+                        
+                        <ul class="space-y-4 text-xs text-slate-300 border-t border-white/10 pt-6 mb-8"> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-cobalt-400"></i> HD Photography</li> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-cobalt-400"></i> MLS Listing</li> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-cobalt-400"></i> Targeted Property Marketing</li> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-cobalt-400"></i> Basic Staging Advisory</li> <!--[cite: 19]-->
+                        </ul>
+                    </div>
+
+                    <a href="#contact" class="block w-full py-3.5 text-center font-bold text-xs uppercase tracking-widest border border-white/20 hover:border-cobalt-500 rounded-xl transition"> <!--[cite: 19]-->
+                        Select Plan <!--[cite: 19]-->
+                    </a>
+                </div>
+
+                <!-- Premium Package (Featured)[cite: 19] -->
+                <div class="glass-card p-8 sm:p-10 rounded-3xl border-2 border-cobalt-500 md:-translate-y-3 shadow-2xl shadow-cobalt-500/20 flex flex-col justify-between relative"> <!--[cite: 19]-->
+                    <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-cobalt-600 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1 rounded-full shadow">
+                        Most Popular <!--[cite: 19]-->
+                    </span>
+
+                    <div>
+                        <span class="uppercase tracking-[3px] text-sky-400 text-xs font-bold block mb-3">Premium</span> <!--[cite: 19]-->
+                        <h3 class="font-serif text-5xl font-extrabold text-cobalt-400 mb-6">2.5%</h3> <!--[cite: 19]-->
+                        
+                        <ul class="space-y-4 text-xs text-slate-200 border-t border-white/10 pt-6 mb-8"> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3 font-semibold text-white"><i class="fa-solid fa-check text-cobalt-400"></i> Drone Cinematic 4K Tour</li> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-cobalt-400"></i> Targeted Social Media Ads</li> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-cobalt-400"></i> Full Luxury Staging Direction</li> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-cobalt-400"></i> Dedicated Client Consultant</li> <!--[cite: 19]-->
+                        </ul>
+                    </div>
+
+                    <a href="#contact" class="block w-full py-3.5 text-center font-bold text-xs uppercase tracking-widest bg-gradient-to-r from-cobalt-600 to-sky-500 hover:from-cobalt-500 hover:to-sky-400 text-white rounded-xl shadow-lg shadow-cobalt-600/30 transition">
+                        Select Plan <!--[cite: 19]-->
+                    </a>
+                </div>
+
+                <!-- Elite Package[cite: 19] -->
+                <div class="glass-card p-8 sm:p-10 rounded-3xl border border-white/10 flex flex-col justify-between"> <!--[cite: 19]-->
+                    <div>
+                        <span class="uppercase tracking-[3px] text-cobalt-400 text-xs font-bold block mb-3">Elite</span> <!--[cite: 19]-->
+                        <h3 class="font-serif text-5xl font-extrabold text-white mb-6">4.0%</h3> <!--[cite: 19]-->
+                        
+                        <ul class="space-y-4 text-xs text-slate-300 border-t border-white/10 pt-6 mb-8"> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3 font-semibold text-white"><i class="fa-solid fa-check text-cobalt-400"></i> International Media Exposure</li> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-cobalt-400"></i> Global PR &amp; Editorial Campaign</li> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-cobalt-400"></i> 24/7 Concierge Advisory</li> <!--[cite: 19]-->
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-cobalt-400"></i> Private VIP Buyer Access Network</li> <!--[cite: 19]-->
+                        </ul>
+                    </div>
+
+                    <a href="#contact" class="block w-full py-3.5 text-center font-bold text-xs uppercase tracking-widest border border-white/20 hover:border-cobalt-500 rounded-xl transition"> <!--[cite: 19]-->
+                        Select Plan <!--[cite: 19]-->
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section[cite: 19] -->
+    <section id="testimonials" class="py-28 max-w-7xl mx-auto px-6 reveal-element"> <!--[cite: 19]-->
+        <div class="text-center max-w-2xl mx-auto mb-20"> <!--[cite: 19]-->
+            <span class="text-xs uppercase tracking-[3px] text-cobalt-400 font-bold block mb-2">Client Testimonials</span> <!--[cite: 19]-->
+            <h2 class="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight">Trusted by Elite Clients</h2> <!--[cite: 19]-->
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8"> <!--[cite: 19]-->
+            
+            <div class="glass-card p-8 sm:p-10 rounded-3xl border border-white/10 flex flex-col justify-between"> <!--[cite: 19]-->
+                <div>
+                    <div class="text-amber-400 text-xs mb-4">★★★★★</div>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6 font-light italic">
+                        “Exceptional service from start to finish. The team sold our property above asking price within days.” <!--[cite: 19]-->
+                    </p>
+                </div>
+                <div class="flex items-center gap-4 pt-4 border-t border-white/10">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="Michael Anderson" class="w-11 h-11 rounded-full object-cover border border-cobalt-400">
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Michael Anderson</h4> <!--[cite: 19]-->
+                        <p class="text-xs text-cobalt-400 font-medium">Bel Air Property Owner</p> <!--[cite: 19]-->
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-8 sm:p-10 rounded-3xl border border-white/10 flex flex-col justify-between"> <!--[cite: 19]-->
+                <div>
+                    <div class="text-amber-400 text-xs mb-4">★★★★★</div>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6 font-light italic">
+                        “Professional marketing, cinematic visuals, and an outstanding luxury buying experience.” <!--[cite: 19]-->
+                    </p>
+                </div>
+                <div class="flex items-center gap-4 pt-4 border-t border-white/10">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Sophia Williams" class="w-11 h-11 rounded-full object-cover border border-cobalt-400">
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Sophia Williams</h4> <!--[cite: 19]-->
+                        <p class="text-xs text-cobalt-400 font-medium">Miami Investor</p> <!--[cite: 19]-->
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-8 sm:p-10 rounded-3xl border border-white/10 flex flex-col justify-between"> <!--[cite: 19]-->
+                <div>
+                    <div class="text-amber-400 text-xs mb-4">★★★★★</div>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6 font-light italic">
+                        “Their premium presentation and negotiation strategy delivered incredible results.” <!--[cite: 19]-->
+                    </p>
+                </div>
+                <div class="flex items-center gap-4 pt-4 border-t border-white/10">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" alt="Daniel Carter" class="w-11 h-11 rounded-full object-cover border border-cobalt-400">
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Daniel Carter</h4> <!--[cite: 19]-->
+                        <p class="text-xs text-cobalt-400 font-medium">Luxury Home Seller</p> <!--[cite: 19]-->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Contact & Consultation Section[cite: 19] -->
+    <section id="contact" class="py-28 bg-obsidian-900 border-t border-white/5 reveal-element"> <!--[cite: 19]-->
+        <div class="max-w-3xl mx-auto px-6 text-center"> <!--[cite: 19]-->
+            
+            <span class="text-xs uppercase tracking-[3px] text-cobalt-400 font-bold block mb-2">Confidential Advisory</span> <!--[cite: 19]-->
+            <h2 class="font-serif text-3xl sm:text-5xl font-bold text-white mb-4">Let's Talk Business</h2> <!--[cite: 19]-->
+            <p class="text-slate-400 text-sm max-w-lg mx-auto mb-10 font-light">
+                Confidentiality, premium service, and outstanding results are at the core of everything we do. <!--[cite: 19]-->
+            </p>
+
+            <form id="contactForm" onsubmit="handleInquiry(event)" class="glass-card p-8 sm:p-12 rounded-3xl border border-white/10 shadow-2xl space-y-5 text-left">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-slate-400 mb-2 font-medium">Full Name</label>
+                        <input
+                            type="text"
+                            required
+                            placeholder="Julian Alexander"
+                            class="w-full p-4 rounded-xl bg-obsidian-950 border border-white/10 text-white text-sm outline-none focus:border-cobalt-500 transition"
+                        > <!--[cite: 19]-->
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-slate-400 mb-2 font-medium">Email Address</label>
+                        <input
+                            type="email"
+                            required
+                            placeholder="julian@estateclient.com"
+                            class="w-full p-4 rounded-xl bg-obsidian-950 border border-white/10 text-white text-sm outline-none focus:border-cobalt-500 transition"
+                        > <!--[cite: 19]-->
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-slate-400 mb-2 font-medium">Target Location / Property Reference</label>
+                    <input
+                        type="text"
+                        placeholder="e.g. Bel Air contemporary or Aspen penthouse"
+                        class="w-full p-4 rounded-xl bg-obsidian-950 border border-white/10 text-white text-sm outline-none focus:border-cobalt-500 transition"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-slate-400 mb-2 font-medium">Property Details &amp; Objectives</label>
+                    <textarea
+                        rows="4"
+                        required
+                        placeholder="Your property details, desired valuation timeline, and consultation requirements..."
+                        class="w-full p-4 rounded-xl bg-obsidian-950 border border-white/10 text-white text-sm outline-none focus:border-cobalt-500 transition resize-none"
+                    ></textarea> <!--[cite: 19]-->
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full py-4 bg-gradient-to-r from-cobalt-600 to-sky-500 hover:from-cobalt-500 hover:to-sky-400 text-white font-bold text-xs uppercase tracking-[2px] rounded-xl shadow-xl shadow-cobalt-600/30 transition"> <!--[cite: 19]-->
+                    Send Inquiry <!--[cite: 19]-->
+                </button>
+            </form>
+
+        </div>
+    </section>
+
+    <!-- Footer[cite: 19] -->
+    <footer class="py-12 border-t border-white/10 bg-obsidian-950 text-slate-500 text-xs"> <!--[cite: 19]-->
+        <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+            
+            <div class="text-sm font-black tracking-tight text-white flex items-center gap-1.5">
+                <span>ESTATE<span class="text-cobalt-500">.</span>CORE</span> <!--[cite: 19]-->
+            </div>
+
+            <!-- Mandatory Required Copyright -->
+            <p class="text-center font-medium tracking-wide text-slate-400">
+                © 2026 WebNova Studio · RR Web Designers · All rights reserved.
+            </p>
+
+            <div class="flex items-center gap-6 uppercase tracking-widest text-[11px]">
+                <a href="#listings" class="hover:text-cobalt-400 transition">Listings</a> <!--[cite: 19]-->
+                <a href="#services" class="hover:text-cobalt-400 transition">Services</a> <!--[cite: 19]-->
+                <a href="#contact" class="hover:text-cobalt-400 transition">Advisory</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive JavaScript[cite: 19] -->
+    <script>
+        // Smooth Loader Removal[cite: 19]
+        window.addEventListener("load", () => {
+            const loader = document.getElementById("loader");
+            if (loader) {
+                loader.style.opacity = "0";
+                setTimeout(() => {
+                    loader.style.display = "none";
+                }, 500);
+            }
+        });
+
+        // Mobile Menu Drawer Toggle[cite: 19]
+        const menuBtn = document.getElementById("menuBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
+        const menuToggleIcon = document.getElementById("menuToggleIcon");
+        const mobileNavLinks = document.querySelectorAll(".mobile-nav-link");
+
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener("click", () => {
+                mobileMenu.classList.toggle("hidden");
+                if (mobileMenu.classList.contains("hidden")) {
+                    menuToggleIcon.classList.remove("fa-xmark");
+                    menuToggleIcon.classList.add("fa-bars");
+                } else {
+                    menuToggleIcon.classList.remove("fa-bars");
+                    menuToggleIcon.classList.add("fa-xmark");
+                }
+            });
+
+            mobileNavLinks.forEach(link => {
+                link.addEventListener("click", () => {
+                    mobileMenu.classList.add("hidden");
+                    menuToggleIcon.classList.remove("fa-xmark");
+                    menuToggleIcon.classList.add("fa-bars");
+                });
+            });
+        }
+
+        // Listings Filter Tab Functionality
+        function filterProperties(category, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.className = "filter-btn px-4 py-2 rounded-full glass-card text-slate-400 hover:text-white transition";
+            });
+            btn.className = "filter-btn px-4 py-2 rounded-full bg-cobalt-600 text-white transition";
+
+            const items = document.querySelectorAll('.property-item');
+            items.forEach(item => {
+                if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Form Submission with Toast Notification
+        function handleInquiry(e) {
+            e.preventDefault();
+            const toast = document.getElementById('statusToast');
+            toast.classList.remove('-translate-y-28', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('-translate-y-28', 'opacity-0');
+            }, 3500);
+            document.getElementById('contactForm').reset();
+        }
+
+        // Intersection Observer for Smooth Scroll Reveals[cite: 19]
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("active");
+                }
+            });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll(".reveal-element").forEach((el) => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
